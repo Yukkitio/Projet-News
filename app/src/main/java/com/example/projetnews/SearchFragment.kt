@@ -1,8 +1,5 @@
 package com.example.projetnews
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Spinner
 import android.widget.Toast
@@ -22,17 +20,18 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
-import java.util.Locale
 
 class SearchFragment : Fragment() {
-    private lateinit var dropDownCountry: Spinner
+    private lateinit var dropDownType: Spinner
+    private lateinit var dropDownResult: Spinner
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: NewsAdapter
     private lateinit var searchInput: SearchView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
-        dropDownCountry = view.findViewById(R.id.dropdown_country)
+        dropDownType = view.findViewById(R.id.dropdown_type)
+        dropDownResult = view.findViewById(R.id.dropdown_resultat)
         recyclerView = view.findViewById(R.id.recyclerView)
         searchInput = view.findViewById(R.id.SearchInput)
         adapter = NewsAdapter()
@@ -42,36 +41,61 @@ class SearchFragment : Fragment() {
                 startActivity(intent)
             }
             override fun onShareClicked(newsEntity: Article) {
-                val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("Article URL", newsEntity.url)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(requireContext(), "URL copier dans le presse-papier", Toast.LENGTH_LONG).show()
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, "Hey ! Regarde moi ce super article : " + newsEntity.url)
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                startActivity(shareIntent)
             }
         }
         recyclerView.adapter = adapter
-        val countryList = resources.getStringArray(R.array.country_arrays).toList()
-        val countryNamesList = mutableListOf<String>()
-        for (country in countryList) {
-            countryNamesList.add(country.substringBefore(" ("))
-        }
 
         searchInput.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                loadData("subject", query)
+                dropDownType.visibility = View.VISIBLE
+                dropDownResult.visibility = View.VISIBLE
+                dropDownType.setSelection(0)
+                dropDownResult.setSelection(0)
+                loadData("Subject", query)
                 return false
             }
             override fun onQueryTextChange(newText: String): Boolean {
+                dropDownType.visibility = View.GONE
+                dropDownResult.visibility = View.GONE
                 return false
             }
         })
-
-        dropDownCountry.setSelection(countryNamesList.indexOf("France"))
-        dropDownCountry.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        dropDownResult.visibility = View.GONE
+        dropDownType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedCountry = parent?.getItemAtPosition(position).toString().substringAfter("(").substringBefore(")").lowercase()
-                loadData("country", selectedCountry)
-            }
+                val type = parent?.getItemAtPosition(position).toString()
+                val items = when (type) {
+                    "Pays" -> resources.getStringArray(R.array.country_arrays)
+                    "Categories" -> resources.getStringArray(R.array.category_arrays)
+                    "Sources" -> resources.getStringArray(R.array.source_arrays)
+                    else -> arrayOf()
+                }
 
+                dropDownResult.visibility = View.VISIBLE
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, items)
+                dropDownResult.adapter = adapter
+                dropDownResult.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        val value = parent?.getItemAtPosition(position).toString().lowercase()
+                        // Vérifier si le type sélectionné est "Pays"
+                        if (type == "Pays") {
+                            val filteredValue = value.substringAfter("(").substringBefore(")").lowercase()
+                            loadData(type, filteredValue)
+                        } else {
+                            loadData(type, value)
+                        }
+                        searchInput.visibility = View.VISIBLE
+                    }
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                }
+            }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
         return view
@@ -81,9 +105,11 @@ class SearchFragment : Fragment() {
         val retrofit = Retrofit.Builder().baseUrl("https://newsapi.org/v2/").addConverterFactory(GsonConverterFactory.create()).build()
         val service = retrofit.create(NewsApiService::class.java)
         val call = when (requestType) {
-            "subject" -> service.search_subject(valueData)
-            "country" -> service.search_coutry(valueData)
-            else -> service.search_coutry("FR")
+            "Subject" -> service.search_subject(valueData)
+            "Pays" -> service.search_coutry(valueData)
+            "Categories" -> service.search_category(valueData)
+            "Sources" -> service.search_sources(valueData)
+            else -> service.search_coutry("us")
         }
         call.enqueue(object: Callback<ResultWrapper> {
             override fun onResponse(call: Call<ResultWrapper>, response: Response<ResultWrapper>) {

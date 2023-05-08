@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/red"
+    android:background="@color/tempColorB"
     tools:context=".SearchFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -23,21 +23,40 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <Spinner
-                android:id="@+id/dropdown_country"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:contentDescription="@string/app_name"
-                android:entries="@array/country_arrays"
-                android:prompt="@string/country_prompt"
-                android:spinnerMode="dialog" />
-
             <SearchView
                 android:id="@+id/SearchInput"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0" />
+                android:layout_weight="1"
+                tools:ignore="NestedWeights" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/dropdown_type"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_weight="0.2"
+                android:contentDescription="@string/app_name"
+                android:entries="@array/type_arrays"
+                android:prompt="@string/type_prompt"
+                android:spinnerMode="dialog"
+                tools:ignore="NestedWeights" />
+
+            <Spinner
+                android:id="@+id/dropdown_resultat"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_weight="0.8"
+                android:contentDescription="@string/app_name"
+                android:entries="@array/type_arrays"
+                android:prompt="@string/type_prompt"
+                android:spinnerMode="dialog" />
         </LinearLayout>
 
     </LinearLayout>
@@ -54,5 +73,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        tools:listitem="@layout/news_item_v2" />
+        tools:listitem="@layout/news_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,17 @@
 <resources>
     <string name="app_name">Projet News</string>
 
+    <string name="type_prompt">Filtre</string>
+    <string-array name="type_arrays">
+        <item> -- </item>
+        <item>Pays</item>
+        <item>Categories</item>
+        <item>Sources</item>
+    </string-array>
+
     <string name="country_prompt">Votre pays</string>
     <string-array name="country_arrays">
+        <item> -- </item>
         <item>United Arab Emirates (AE)</item>
         <item>Argentina (AR)</item>
         <item>Austria (AT)</item>
@@ -57,5 +66,26 @@
         <item>United States (US)</item>
         <item>Venezuela (VE)</item>
         <item>South Africa (ZA)</item>
+    </string-array>
+
+    <string name="category_prompt">Catégories</string>
+    <string-array name="category_arrays">
+        <item> -- </item>
+        <item>Business</item>
+        <item>Entertainment</item>
+        <item>General</item>
+        <item>Health</item>
+        <item>Science</item>
+        <item>Sports</item>
+        <item>Technology</item>
+    </string-array>
+
+    <string name="source_prompt">Source</string>
+    <string-array name="source_arrays">
+        <item> -- </item>
+        <item>google-news</item>
+        <item>bbc-news</item>
+        <item>CNN</item>
+        <item>Le Monde</item>
     </string-array>
 </resources>

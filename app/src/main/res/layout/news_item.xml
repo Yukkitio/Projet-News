@@ -1,84 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp" >
+    app:cardBackgroundColor="@color/tempColorD"
+    app:cardCornerRadius="12dp"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/round_rect_shape"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:ignore="ImageContrastCheck"
-            tools:srcCompat="@tools:sample/avatars"/>
+            android:layout_height="200dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            tools:ignore="ImageContrastCheck" />
 
         <TextView
             android:id="@+id/titre_textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="5dp"
-            android:text="TITRE"
-            android:textColor="@color/black"
-            android:textSize="15dp"
-            android:textStyle="bold"/>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="2dp" />
+            android:layout_marginTop="8dp"
+            android:paddingStart="8dp"
+            android:textColor="@color/tempColorV"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/description_textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="5dp"
-            android:text="DESCRIPTION"
-            android:textColor="@color/black"
-            android:textSize="10dp"/>
+            android:layout_marginTop="8dp"
+            android:paddingStart="8dp"
+            android:textColor="@color/tempColorW"
+            android:textSize="13sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/source_textView"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.25"
-                android:gravity="center"
-                android:text="SOURCE"
-                android:textColor="@color/black"/>
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:textColor="@color/tempColorW"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/date_textView"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.75"
-                android:gravity="center_vertical"
-                android:text="DATE" />
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textColor="@color/tempColorW"
+                android:textSize="12sp" />
 
             <ImageButton
                 android:id="@+id/share_Button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_weight="0.01"
                 android:background="@null"
                 app:srcCompat="?attr/actionModeShareDrawable"
                 tools:ignore="SpeakableTextPresentCheck" />
-
         </LinearLayout>
     </LinearLayout>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="5dp" />
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

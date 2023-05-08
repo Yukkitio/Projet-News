@@ -1,14 +1,12 @@
 package com.example.projetnews
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
 import android.widget.AdapterView
 import android.widget.Spinner
 import android.widget.Toast
@@ -39,10 +37,13 @@ class BaseFragment : Fragment() {
                 startActivity(intent)
             }
             override fun onShareClicked(newsEntity: Article) {
-                val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("Article URL", newsEntity.url)
-                clipboard.setPrimaryClip(clip)
-                Toast.makeText(requireContext(), "URL copier dans le presse-papier", Toast.LENGTH_LONG).show()
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, "Hey ! Regarde moi ce super article : " + newsEntity.url)
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                startActivity(shareIntent)
             }
         }
         recyclerView.adapter = adapter
@@ -55,7 +56,7 @@ class BaseFragment : Fragment() {
         dropDownCountry.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedCountry = parent.getItemAtPosition(position).toString()
-                val countryCode = selectedCountry.substringAfter("(").substringBefore(")").toLowerCase()
+                val countryCode = selectedCountry.substringAfter("(").substringBefore(")").lowercase()
                 loadData(countryCode)
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {

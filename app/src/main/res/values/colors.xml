@@ -15,9 +15,9 @@
     <color name="orange">#FF9800</color>
 
     <color name="tempColorM">#F7F0F5</color>
-    <color name="tempColorD">#DECBB7</color>
-    <color name="tempColorB">#8F857D</color>
-    <color name="tempColorW">#5C5552</color>
-    <color name="tempColorV">#433633</color>
+    <color name="tempColorD">#EAECEC</color>
+    <color name="tempColorB">#CEDFDF</color>
+    <color name="tempColorW">#1C3C4A</color>
+    <color name="tempColorV">#16303B</color>
 
 </resources>

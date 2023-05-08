@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit
 class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_ITEM_CALLBACK) {
     companion object {
         private val DIFF_UTIL_ITEM_CALLBACK = object : DiffUtil.ItemCallback<Article>() {
-            override fun areItemsTheSame(oldItem: Article, newItem: Article) = oldItem.source.id == newItem.source.id
-            override fun areContentsTheSame(oldItem: Article, newItem: Article) = oldItem == newItem
-        }
+                override fun areItemsTheSame(oldItem: Article, newItem: Article) = oldItem.source.id == newItem.source.id
+                override fun areContentsTheSame(oldItem: Article, newItem: Article) = oldItem == newItem
+            }
     }
     var listener: OnClickListener? = null
 
