@@ -21,11 +21,11 @@ class MainActivity : AppCompatActivity() {
 
             when(it.itemId) {
                 R.id.bottom_nav_menu_1 -> {
-                    pushFragment(BlankFragment())
+                    pushFragment(BaseFragment())
                     true
                 }
                 R.id.bottom_nav_menu_2 -> {
-                    pushFragment(BlankFragment2())
+                    pushFragment(SearchFragment())
                     true
                 }
                 else -> true

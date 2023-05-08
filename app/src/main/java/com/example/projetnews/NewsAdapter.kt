@@ -1,5 +1,6 @@
 package com.example.projetnews
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -15,14 +17,14 @@ import java.util.concurrent.TimeUnit
 class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_ITEM_CALLBACK) {
     companion object {
         private val DIFF_UTIL_ITEM_CALLBACK = object : DiffUtil.ItemCallback<Article>() {
-                override fun areItemsTheSame(oldItem: Article, newItem: Article) = oldItem.source.id == newItem.source.id
-                override fun areContentsTheSame(oldItem: Article, newItem: Article) = oldItem == newItem
-            }
+            override fun areItemsTheSame(oldItem: Article, newItem: Article) = oldItem.source.id == newItem.source.id
+            override fun areContentsTheSame(oldItem: Article, newItem: Article) = oldItem == newItem
+        }
     }
     var listener: OnClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder =
-        NewsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.news_item_v2, parent, false))
+        NewsViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.news_item, parent, false))
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) =
         holder.bind(getItem(position))
@@ -47,6 +49,7 @@ class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_I
                 listener?.onShareClicked(getItem(adapterPosition))
             }
         }
+        @SuppressLint("SetTextI18n")
         fun bind(item: Article?){
             item?.let {
                 if (it.urlToImage != null && it.urlToImage.isNotEmpty()) {
@@ -55,41 +58,44 @@ class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_I
                 } else {
                     imageArticle.visibility = View.GONE
                 }
-
                 titreArticle.text = it.title
-
                 if (it.description != null && it.description.isNotEmpty()) {
                     descArticle.text = it.description
                     descArticle.visibility = View.VISIBLE
                 } else {
                     descArticle.visibility = View.GONE
                 }
-
-                sourceArticle.text = it.source.name + ", "
-
-                dateArticle.text = getTimePast(it.publishedAt)
+                dateArticle.text = getElapsedTimeFromUTC(it.publishedAt)
+                if (dateArticle.text == ""){
+                    sourceArticle.text = it.source.name
+                }else{
+                    sourceArticle.text = it.source.name+"   -   "
+                }
             }
         }
+        private fun getElapsedTimeFromUTC(utcDate: String): String {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+            try {
+                val date = inputFormat.parse(utcDate)
+                val elapsedTime = System.currentTimeMillis() - date.time
+                return when {
+                    elapsedTime < TimeUnit.MINUTES.toMillis(1) -> "1min"
+                    elapsedTime < TimeUnit.HOURS.toMillis(1) -> TimeUnit.MILLISECONDS.toMinutes(elapsedTime).toString() + "min"
+                    elapsedTime < TimeUnit.DAYS.toMillis(1) -> TimeUnit.MILLISECONDS.toHours(elapsedTime).toString() + "h"
+                    elapsedTime < TimeUnit.DAYS.toMillis(30) -> TimeUnit.MILLISECONDS.toDays(elapsedTime).toString() + "j"
+                    elapsedTime < TimeUnit.DAYS.toMillis(365) -> TimeUnit.MILLISECONDS.toDays(elapsedTime).toString() + "mois"
+                    else -> TimeUnit.MILLISECONDS.toDays(elapsedTime).toString() + "ans"
+                }
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
+            return ""
+        }
     }
-
     // Tu creer tes fonctions pour les différents type d'appel que tu veux
     interface OnClickListener {
         fun onTodoItemClicked(newsEntity: Article)
         fun onShareClicked(newsEntity: Article)
-    }
-    fun getTimePast(dateString: String): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
-        val date = dateFormat.parse(dateString)
-        val elapsedTime = Date().time - date.time
-        val hours = TimeUnit.MILLISECONDS.toHours(elapsedTime)
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedTime) % 60
-        val days = TimeUnit.MILLISECONDS.toDays(elapsedTime)
-        return when {
-            days > 1 -> "$days jours."
-            days == 1L -> "1 jours."
-            hours > 0 -> "$hours h"
-            else -> "$minutes m."
-        }
     }
 }

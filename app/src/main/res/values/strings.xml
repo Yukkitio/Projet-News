@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Projet News</string>
-    <string name="country_prompt">Choisir un pays</string>
+
+    <string name="country_prompt">Votre pays</string>
     <string-array name="country_arrays">
         <item>United Arab Emirates (AE)</item>
         <item>Argentina (AR)</item>
