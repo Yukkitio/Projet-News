@@ -29,7 +29,7 @@ Les articles peuvent être partagés, une fenêtre de dialogue permet à l'utili
 
 #### News API 
 
-```http
+```https
   https://newsapi.org/
 ```
 
