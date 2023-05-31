@@ -30,17 +30,24 @@ class SearchFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_search, container, false)
+
+        // Récupération des vues à partir du layout
         dropDownType = view.findViewById(R.id.dropdown_type)
         dropDownResult = view.findViewById(R.id.dropdown_resultat)
         recyclerView = view.findViewById(R.id.recyclerView)
         searchInput = view.findViewById(R.id.SearchInput)
         adapter = NewsAdapter()
+
+        // Configuration des listeners de l'adaptateur pour les événements de clic sur les articles
         adapter.listener = object : NewsAdapter.OnClickListener {
+
             override fun onTodoItemClicked(newsEntity: Article) {
+                // Lorsqu'un élément de la liste est cliqué, ouvrir le lien de l'article dans un navigateur externe
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(newsEntity.url))
                 startActivity(intent)
             }
             override fun onShareClicked(newsEntity: Article) {
+                // Lorsque le bouton de partage est cliqué, partager le lien de l'article
                 val sendIntent: Intent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, "Hey ! Regarde moi ce super article : " + newsEntity.url)
@@ -52,6 +59,7 @@ class SearchFragment : Fragment() {
         }
         recyclerView.adapter = adapter
 
+        // Configuration du listener pour la barre de recherche
         searchInput.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 dropDownType.visibility = View.VISIBLE
@@ -67,6 +75,8 @@ class SearchFragment : Fragment() {
                 return false
             }
         })
+
+        // Configuration du spinner pour le type de recherche
         dropDownResult.visibility = View.GONE
         dropDownType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -86,11 +96,20 @@ class SearchFragment : Fragment() {
                         val value = parent?.getItemAtPosition(position).toString().lowercase()
                         // Vérifier si le type sélectionné est "Pays"
                         if (type == "Pays") {
+                            // Si le type sélectionné est "Pays", on extrait la valeur entre parenthèses et la mettons en minuscules
                             val filteredValue = value.substringAfter("(").substringBefore(")").lowercase()
                             loadData(type, filteredValue)
+
+                        } else if (type == "Sources") {
+                            // Si le type sélectionné est "Sources", nous remplaçons les espaces par des tirets et mettons tout en minuscules
+                            val filteredValue = value.replace("'", "").replace(" ", "-").lowercase()
+                            loadData(type, filteredValue)
+
                         } else {
+                            // Pour les autres types (Categories, etc.), nous utilisons directement la valeur d'origine
                             loadData(type, value)
                         }
+
                         searchInput.visibility = View.VISIBLE
                     }
                     override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -102,8 +121,12 @@ class SearchFragment : Fragment() {
     }
 
     private fun loadData(requestType: String, valueData: String) {
+
+        // Initialisation de Retrofit pour effectuer les appels à l'API
         val retrofit = Retrofit.Builder().baseUrl("https://newsapi.org/v2/").addConverterFactory(GsonConverterFactory.create()).build()
         val service = retrofit.create(NewsApiService::class.java)
+
+        // Sélection de l'appel approprié en fonction du type de recherche
         val call = when (requestType) {
             "Subject" -> service.search_subject(valueData)
             "Pays" -> service.search_coutry(valueData)
@@ -111,15 +134,20 @@ class SearchFragment : Fragment() {
             "Sources" -> service.search_sources(valueData)
             else -> service.search_coutry("us")
         }
+
+        // Exécution de l'appel asynchrone
         call.enqueue(object: Callback<ResultWrapper> {
             override fun onResponse(call: Call<ResultWrapper>, response: Response<ResultWrapper>) {
                 if (response.isSuccessful) {
+                    // Si la réponse est réussie, mettre à jour la liste des articles dans l'adaptateur
                     adapter.submitList(response.body()?.articles)
                 } else {
+                    // Gestion des erreurs HTTP
                     handleHttpError(response.code())
                 }
             }
             override fun onFailure(call: Call<ResultWrapper>, t: Throwable) {
+                // Gestion des erreurs lors de l'appel
                 handleError(t)
             }
         })

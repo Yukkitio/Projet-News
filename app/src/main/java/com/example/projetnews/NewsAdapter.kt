@@ -15,12 +15,14 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_ITEM_CALLBACK) {
+    // Déclaration d'un objet DiffUtil.ItemCallback pour gérer les mises à jour de la ListAdapter
     companion object {
         private val DIFF_UTIL_ITEM_CALLBACK = object : DiffUtil.ItemCallback<Article>() {
                 override fun areItemsTheSame(oldItem: Article, newItem: Article) = oldItem.source.id == newItem.source.id
                 override fun areContentsTheSame(oldItem: Article, newItem: Article) = oldItem == newItem
             }
     }
+    // Déclaration d'une interface pour écouter les événements de clic sur les éléments de la liste
     var listener: OnClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder =
@@ -30,6 +32,7 @@ class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_I
         holder.bind(getItem(position))
 
     inner class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        // Récupération des vues du layout de l'élément de liste
         private val imageArticle = itemView.findViewById<ImageView>(R.id.imageView)
         private val titreArticle = itemView.findViewById<TextView>(R.id.titre_textView)
         private val descArticle = itemView.findViewById<TextView>(R.id.description_textView)
@@ -38,21 +41,25 @@ class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_I
         private val shareArticle = itemView.findViewById<ImageButton>(R.id.share_Button)
 
         init {
+            // Gestion des clics sur l'élément de liste et le bouton de partage
             itemView.setOnClickListener {
-                // ajout d'un bouton sur la carte (toute le carte est un bouton)
+                // Lorsque l'élément de liste est cliqué, déclencher l'événement onTodoItemClicked et transmettre l'entité d'article correspondante
                 val newsEntity = getItem(adapterPosition)
                 listener?.onTodoItemClicked(newsEntity)
             }
 
             shareArticle.setOnClickListener {
-                // Clique sur le bonton share de la carte
+                // Lorsque le bouton de partage est cliqué, déclencher l'événement onShareClicked et transmettre l'entité d'article correspondante
                 listener?.onShareClicked(getItem(adapterPosition))
             }
         }
+
+        // Méthode pour lier les données de l'article à la vue de l'élément de liste
         @SuppressLint("SetTextI18n")
         fun bind(item: Article?){
             item?.let {
                 if (it.urlToImage != null && it.urlToImage.isNotEmpty()) {
+                    // Charger l'image de l'article à partir de l'URL en utilisant Picasso
                     Picasso.get().load(it.urlToImage).into(imageArticle)
                     imageArticle.visibility = View.VISIBLE
                 } else {
@@ -67,12 +74,16 @@ class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_I
                 }
                 dateArticle.text = getElapsedTimeFromUTC(it.publishedAt)
                 if (dateArticle.text == ""){
+                    // Si la date n'est pas disponible, afficher uniquement le nom de la source
                     sourceArticle.text = it.source.name
                 }else{
+                    // Si la date est disponible, afficher le nom de la source suivi d'un séparateur
                     sourceArticle.text = it.source.name+"   -   "
                 }
             }
         }
+
+        // Méthode pour obtenir le temps écoulé à partir d'une date en UTC
         private fun getElapsedTimeFromUTC(utcDate: String): String {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
             inputFormat.timeZone = TimeZone.getTimeZone("UTC")
@@ -93,7 +104,7 @@ class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_I
             return ""
         }
     }
-    // Tu creer tes fonctions pour les différents type d'appel que tu veux
+    // Interface pour écouter les événements de clic sur les éléments de la liste
     interface OnClickListener {
         fun onTodoItemClicked(newsEntity: Article)
         fun onShareClicked(newsEntity: Article)

@@ -83,9 +83,23 @@
     <string name="source_prompt">Source</string>
     <string-array name="source_arrays">
         <item> -- </item>
-        <item>google-news</item>
-        <item>bbc-news</item>
+        <item>Google News</item>
+        <item>BBC News</item>
+        <item>BBC Sport</item>
         <item>CNN</item>
         <item>Le Monde</item>
+        <item>The Guardian</item>
+        <item>MacRumors</item>
+        <item>ESPN</item>
+        <item>Hacker News</item>
+        <item>Independent</item>
+        <item>L\'equipe</item>
+        <item>Les Echos</item>
+        <item>liberation</item>
+        <item>MTV News</item>
+        <item>National Geographic</item>
+        <item>New York Magazine</item>
+        <item>The Washington Post</item>
+        <item>Time</item>
     </string-array>
 </resources>

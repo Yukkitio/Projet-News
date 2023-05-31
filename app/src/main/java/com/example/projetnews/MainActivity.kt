@@ -8,6 +8,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
+    // Déclaration paresseuse des vues
     private val bottomNavigationView by lazy { findViewById<BottomNavigationView>(R.id.bottomNavigationView) }
     private val preferences by lazy { PreferencesManager(this) }
 
@@ -17,8 +18,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         bottomNavigationView.setOnItemSelectedListener {
+            // Enregistrer l'ID de l'élément de navigation sélectionné dans les préférences
             preferences.navigation = it.itemId
 
+            // Charger le fragment correspondant à l'élément de navigation sélectionné
             when(it.itemId) {
                 R.id.bottom_nav_menu_1 -> {
                     pushFragment(BaseFragment())
@@ -31,9 +34,11 @@ class MainActivity : AppCompatActivity() {
                 else -> true
             }
         }
+        // Sélectionner l'élément de navigation enregistré précédemment
         bottomNavigationView.selectedItemId = preferences.navigation
     }
     private fun pushFragment(fragment: Fragment){
+        // Remplacer le fragment actuel par le fragment donné
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
