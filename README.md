@@ -4,8 +4,8 @@
 
 
 Notre application, Projet News, est une application d'agrégation d'articles de sources multiples. 
-Son logo représente le bon vieux journal papier 
-A l'ouverture de l'application, un message de bienvenu accueille l'utilisateur.
+Son logo représente le bon vieux journal papier. 
+A l'ouverture de l'application, un message de bienvenue accueille l'utilisateur.
 
 L'utilisateur a ensuite la possibilité de naviguer sur 2 onglets : 
             
